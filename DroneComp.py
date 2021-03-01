@@ -4,14 +4,11 @@
 
 import threading, socket, sys, time, subprocess
 
-
 # GLOBAL VARIABLES DECLARED HERE....
 host = ''
 port = 9000
-locaddr = (host,port)
-tello_address = ('192.168.10.1', 8889) # Get the Tello drone's address
-
-
+locaddr = (host, port)
+tello_address = ('192.168.10.1', 8889)  # Get the Tello drone's address
 
 # Creates a UDP socketd
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -26,15 +23,16 @@ def recv():
             data, server = sock.recvfrom(1518)
             print(data.decode(encoding="utf-8"))
         except Exception:
-            print ('\n****Keep Eye on Drone****\n')
+            print('\n****Keep Eye on Drone****\n')
             break
 
 
-def sendmsg(msg, sleep = 6):
+def sendmsg(msg, sleep=6):
     print("Sending: " + msg)
     msg = msg.encode(encoding="utf-8")
     sock.sendto(msg, tello_address)
     time.sleep(sleep)
+
 
 # recvThread create
 recvThread = threading.Thread(target=recv)
@@ -42,6 +40,25 @@ recvThread.start()
 
 
 # CREATE FUNCTIONS HERE....
+
+def firstHoop():
+    sendmsg('up 40')
+    sendmsg('forward 210')
+
+
+def secondHoop():
+    sendmsg('go 250 0 60 60')
+
+
+def thirdhoop():
+    sendmsg('ccw 90')
+    sendmsg('forward 250')
+    sendmsg('ccw 90')
+    sendmsg('forward 125')
+
+
+def fourthhoop():
+    sendmsg('250 0 -60 60')
 
 
 print("\nEthan Klopschinski")
@@ -51,9 +68,7 @@ print("\n****CHECK YOUR TELLO WIFI ADDRESS****")
 print("\n****CHECK SURROUNDING AREA BEFORE FLIGHT****")
 print("\n****CHECK IF CO-PILOT IS READY****")
 
-
 ready = input('\nAre you ready to take flight: ')
-
 
 try:
     if ready.lower() == 'yes':
@@ -62,15 +77,13 @@ try:
         sendmsg('command', 0)
         sendmsg('takeoff')
 
-        # Make a Square
-        sendmsg('up 50')
-        sendmsg('forward 100')
-        sendmsg('ccw 90')
-        sendmsg('forward 100')
-        sendmsg('ccw 90')
-        sendmsg('forward 100')
-        sendmsg('ccw 90')
-        sendmsg('forward 100')
+        firstHoop()
+
+        secondHoop()
+
+        thirdhoop()
+
+        fourthhoop()
 
 
         sendmsg('land')
@@ -84,20 +97,7 @@ except KeyboardInterrupt:
 
 breakr = True
 sock.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# etihad
 
 
 
